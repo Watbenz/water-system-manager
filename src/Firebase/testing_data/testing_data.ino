@@ -1,33 +1,8 @@
-
-/**
- * Created by K. Suwatchai (Mobizt)
- * 
- * Email: k_suwatchai@hotmail.com
- * 
- * Github: https://github.com/mobizt
- * 
- * Copyright (c) 2020 mobizt
- *
-*/
-
-//This example shows how to read, store and update database using get, set, push and update functions.
-
+#include "Constant.h"
 #include <WiFi.h>
 #include <FirebaseESP32.h>
 
-#define WIFI_SSID "Wachirawit_2.4G"
-#define WIFI_PASSWORD "3422273580"
-
-#define FIREBASE_HOST "https://water-manager-system-default-rtdb.firebaseio.com/"
-
-/** The database secret is obsoleted, please use other authentication methods, 
- * see examples in the Authentications folder. 
-*/
-#define FIREBASE_AUTH "EhP4M1upgcc0kzEW0u4bJI7FvYwfFmFGGZlZ87VS"
-
-//Define FirebaseESP32 data object
 FirebaseData fbdo;
-
 FirebaseJson json;
 
 void printResult(FirebaseData &data);
@@ -36,7 +11,7 @@ void setup()
 {
   Serial.begin(115200);
 
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  WiFi.begin(SSID_WIFI, PASSWORD_WIFI);
   Serial.print("Connecting to Wi-Fi");
 
   

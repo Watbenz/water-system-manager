@@ -9,8 +9,8 @@
 WiFiClient client;
 iSYNC iSYNC(client);
 
-String ssid = "Wachirawit_2.4G";
-String pass = "3422273580";
+String ssid = "watbenz";
+String pass = "watbenzzzzzz";
 
 String charArrayToString(byte* payload, unsigned int length) {
   String out = "";
