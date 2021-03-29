@@ -1,17 +1,17 @@
-#include "src\Constant\Constant.h"
 #include "src\EasyWifi\EasyWifi.h"
+#include "src\EasyTime\EasyTime.h"
 
 EasyWifi wifi;
+EasyTime t;
 
 void setup() {
   Serial.begin(115200);
   wifi.initWifi();
   wifi.initFirebase();
-  wifi.writeDouble("abc", 123.0);
-  wifi.writeInt("def", 4567);
+  t.initTime();
 }
 
 void loop() {
-   Serial.println(wifi.readInt("def"));
-   delay(500);
+  Serial.println(t.getCurrentDate());
+  delay(1000);
 }

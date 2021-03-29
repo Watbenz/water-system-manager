@@ -90,15 +90,10 @@ void EasyWifi::writeDouble(const char *path, double data)
 double EasyWifi::readDouble(const char *path)
 {
     if (Firebase.getDouble(fbdo, path))
-    {
         return fbdo.doubleData();
-    }
     else
-    {
-        Serial.print("Error in getDouble, ");
-        Serial.println(fbdo.errorReason());
-        return 0.0;
-    }
+        printError();
+    return 0.0;
 }
 
 void EasyWifi::writeInt(const char *path, int data)
@@ -112,17 +107,28 @@ void EasyWifi::writeInt(const char *path, int data)
 int EasyWifi::readInt(const char *path)
 {
     if (Firebase.getInt(fbdo, path))
-    {
         return fbdo.intData();
-    }
     else
-    {
-        Serial.print("Error in getInt, ");
-        Serial.println(fbdo.errorReason());
-        return 0;
-    }
+        printError();
+    return 0;
 }
 
+String EasyWifi::readString(const char *path)
+{
+    if (Firebase.getString(fbdo, path))
+        return fbdo.stringData();
+    else
+        printError();
+    return "Error";
+}
+
+void EasyWifi::writeString(const char *path, String data)
+{
+    if (Firebase.setString(fbdo, path, data))
+        printSuccess();
+    else
+        printError();
+}
 
 void EasyWifi::printJson()
 {

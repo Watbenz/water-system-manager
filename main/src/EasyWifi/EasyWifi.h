@@ -2,6 +2,7 @@
 #define EASY_WIFI_H
 
 #include <FirebaseESP32.h>
+#include <Arduino.h>
 class EasyWifi
 {
 private:
@@ -23,6 +24,8 @@ public:
     void writeDouble(const char *path, double data);
     int readInt(const char *path);
     void writeInt(const char *path, int data);
+    String readString(const char *path);
+    void writeString(const char *path, String data);
 };
 
 #endif
