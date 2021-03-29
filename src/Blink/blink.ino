@@ -10,7 +10,7 @@ char pass[] = "watbenzzzzzz";
 
 void setup()
 {
-  Serial.begin(115200);+
+  Serial.begin(115200);
   Blynk.begin(auth, ssid, pass);
 }
 

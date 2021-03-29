@@ -2,39 +2,27 @@
 #define EASY_WIFI_H
 
 #include <FirebaseESP32.h>
-#include <Arduino.h>
-
 class EasyWifi
 {
 private:
-    enum FirebaseType
-    {
-        INT,
-        FLOAT,
-        DOUBLE,
-        BOOLEAN,
-        STR,
-        JSON,
-        ARRAY,
-        BLOB,
-        FILE,
-        ELSE
-    };
     FirebaseData fbdo;
     FirebaseJson json;
     void connecting();
     void printError();
     void printSuccess();
     void printJson();
-    void printArray(); 
-    void printBlob(); 
-    void printFile(); 
-    int findType(String str);
+    void printArray();
+    void printBlob();
+    void printFile();
+
 public:
     void initWifi();
     void initFirebase();
     void printResult();
-    void writeData(const char *path, double data);
+    double readDouble(const char *path);
+    void writeDouble(const char *path, double data);
+    int readInt(const char *path);
+    void writeInt(const char *path, int data);
 };
 
 #endif

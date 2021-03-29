@@ -1,7 +1,6 @@
 #include "EasyWifi.h"
 #include "WiFi.h"
 #include "FirebaseESP32.h"
-#include <Arduino.h>
 #include ".\..\Constant\Constant.h"
 
 void EasyWifi::initWifi()
@@ -54,75 +53,76 @@ void EasyWifi::printSuccess()
     Serial.println();
 }
 
-int EasyWifi::findType(String str)
-{
-    if (str == "int")
-        return INT;
-    if (str == "float")
-        return FLOAT;
-    if (str == "double")
-        return DOUBLE;
-    if (str == "boolean")
-        return BOOLEAN;
-    if (str == "string")
-        return STR;
-    if (str == "json")
-        return JSON;
-    if (str == "array")
-        return ARRAY;
-    if (str == "blob")
-        return BLOB;
-    if (str == "file")
-        return FILE;
-    return ELSE;
-}
-
 void EasyWifi::printResult()
 {
-    int type = findType(fbdo.dataType());
+    // int type = findType(fbdo.dataType());
 
-    switch (type)
-    {
-    case INT:
+    if (fbdo.dataType() == "int")
         Serial.println(fbdo.intData());
-        break;
-    case FLOAT:
+    else if (fbdo.dataType() == "float")
         Serial.println(fbdo.floatData(), 5);
-        break;
-    case DOUBLE:
+    else if (fbdo.dataType() == "double")
         printf("%.9lf\n", fbdo.doubleData());
-        break;
-    case BOOLEAN:
+    else if (fbdo.dataType() == "boolean")
         Serial.println(fbdo.boolData() == 1 ? "true" : "false");
-        break;
-    case STR:
+    else if (fbdo.dataType() == "string")
         Serial.println(fbdo.stringData());
-        break;
-    case JSON:
+    else if (fbdo.dataType() == "json")
         printJson();
-        break;
-    case ARRAY:
+    else if (fbdo.dataType() == "array")
         printArray();
-        break;
-    case BLOB:
+    else if (fbdo.dataType() == "blob")
         printBlob();
-        break;
-    case FILE:
+    else if (fbdo.dataType() == "file")
         printFile();
-        break;
-    default:
+    else
         Serial.println(fbdo.payload());
-        break;
-    }
 }
 
-void EasyWifi::writeData(const char *path, double data)
+void EasyWifi::writeDouble(const char *path, double data)
 {
     if (Firebase.setDouble(fbdo, path, data))
         printSuccess();
     else
         printError();
 }
+
+double EasyWifi::readDouble(const char *path)
+{
+    if (Firebase.getDouble(fbdo, path))
+    {
+        return fbdo.doubleData();
+    }
+    else
+    {
+        Serial.print("Error in getDouble, ");
+        Serial.println(fbdo.errorReason());
+        return 0.0;
+    }
+}
+
+void EasyWifi::writeInt(const char *path, int data)
+{
+    if (Firebase.setInt(fbdo, path, data))
+        printSuccess();
+    else
+        printError();
+}
+
+int EasyWifi::readInt(const char *path)
+{
+    if (Firebase.getInt(fbdo, path))
+    {
+        return fbdo.intData();
+    }
+    else
+    {
+        Serial.print("Error in getInt, ");
+        Serial.println(fbdo.errorReason());
+        return 0;
+    }
+}
+
 
 void EasyWifi::printJson()
 {
