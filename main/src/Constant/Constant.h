@@ -17,5 +17,7 @@
 #define GMT (3600 * 7)
 
 #define WATER_SENSOR 34
+#define ECHO 2
+#define TRIG 0
 
 #endif

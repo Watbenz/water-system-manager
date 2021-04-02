@@ -1,17 +1,19 @@
 #include "src\EasyWifi\EasyWifi.h"
 #include "src\EasyTime\EasyTime.h"
+#include "src\UltrasonicSensor\UltrasonicSensor.h"
 
 EasyWifi wifi;
-EasyTime t;
+EasyTime easyTime;
+UltrasonicSensor ultrasonicSensor(20);
 
 void setup() {
   Serial.begin(115200);
   wifi.initWifi();
   wifi.initFirebase();
-  t.initTime();
+  easyTime.initTime();
 }
 
 void loop() {
-  Serial.println(t.getCurrentDate());
+  Serial.println(easyTime.getCurrentDate());
   delay(1000);
 }
