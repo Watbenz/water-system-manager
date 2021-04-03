@@ -2,16 +2,10 @@
 #include ".\..\Constant\Constant.h"
 #include <Arduino.h>
 
-UltrasonicSensor::UltrasonicSensor(int cm)
+UltrasonicSensor::UltrasonicSensor()
 {
-    this->tankHeight = cm;
     pinMode(TRIG, OUTPUT);
     pinMode(ECHO, INPUT);
-}
-
-void UltrasonicSensor::setTankHeight(int cm)
-{
-    this->tankHeight = cm;
 }
 
 /*  s = v * t
@@ -31,9 +25,4 @@ int UltrasonicSensor::readDistance()
 
     long t = pulseIn(ECHO, HIGH);
     return 0.034 * t / 2;
-}
-
-double UltrasonicSensor::getTankLeftPercent()
-{
-    return (readDistance() / tankHeight) * 100.0;
 }

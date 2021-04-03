@@ -6,10 +6,8 @@ class UltrasonicSensor
 private:
     int tankHeight;
 public:
-    UltrasonicSensor(int cm);
-    void setTankHeight(int cm);
+    UltrasonicSensor();
     int readDistance();
-    double getTankLeftPercent();
 };
 
 #endif

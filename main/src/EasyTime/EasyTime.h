@@ -13,7 +13,7 @@ private:
     String getCurrentDateTime();
 
 public:
-    void initTime();
+    void init();
     String getCurrentDate();
     String getCurrentTime();
 };

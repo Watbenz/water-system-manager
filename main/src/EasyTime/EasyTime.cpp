@@ -4,7 +4,7 @@
 #include <WiFiUdp.h>
 #include <Arduino.h>
 
-void EasyTime::initTime()
+void EasyTime::init()
 {
     timeClient.begin();
     timeClient.setTimeOffset(GMT);
