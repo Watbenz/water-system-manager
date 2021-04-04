@@ -14,6 +14,10 @@
 #define FIREBASE_AUTH "EhP4M1upgcc0kzEW0u4bJI7FvYwfFmFGGZlZ87VS"
 #define FIREBASE_TIMEOUT (1000 * 60)
 
+#define iSYNC_USERNAME "watbenz"
+#define iSYNC_AUTH "6047312e62c47f64b13fb5ad"
+#define iSYNC_KEY "6047319862c47f64b13fbe3e"
+
 #define GMT (3600 * 7)
 
 #define WATER_SENSOR 34
