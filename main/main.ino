@@ -1,3 +1,4 @@
+
 #include "src\EasyWifi\EasyWifi.h"
 #include "src\EasyFirebase\EasyFirebase.h"
 #include "src\EasyTime\EasyTime.h"
@@ -18,27 +19,27 @@ UltrasonicSensor ultrasonicSensor;
 WiFiClient client;
 iSYNC iSYNC(client);
 
-const long interval = 60000;
+const long interval = 2000;
 long previousMillis = 0;
 
 void callback(char *topic, byte *payload, unsigned int length)
 {
-    String cmd = charArrayToString(payload, length);
+  String cmd = charArrayToString(payload, length);
 
-    if (cmd.startsWith("LINE:"))
-        cmd = cmd.substring(5);
+  if (cmd.startsWith("LINE:"))
+    cmd = cmd.substring(5);
 
-    Serial.print("command from line: ");
-    Serial.println(cmd);
+  Serial.print("command from line: ");
+  Serial.println(cmd);
 
-    if (cmd.equals("เปิดไฟ"))
-    {
-        iSYNC.mqPub(iSYNC_KEY, "ไฟได้เปิดขึ้นแล้ว"); //Publish
-    }
-    else if (cmd.equals("ปิดไฟ"))
-    {
-        iSYNC.mqPub(iSYNC_KEY, "ไฟปิดลงแล้ว"); //Publish
-    }
+  if (cmd.equals("เปิดไฟ"))
+  {
+    iSYNC.mqPub(iSYNC_KEY, "ไฟได้เปิดขึ้นแล้ว"); //Publish
+  }
+  else if (cmd.equals("ปิดไฟ"))
+  {
+    iSYNC.mqPub(iSYNC_KEY, "ไฟปิดลงแล้ว"); //Publish
+  }
 }
 
 
@@ -73,12 +74,27 @@ void setup() {
 void loop() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
-    String path = "root/" + easyTime.getCurrentDate() + "/" + easyTime.getCurrentTime();
+    //    String path = "root/" + easyTime.getCurrentDate() + "/" + easyTime.getCurrentTime();
+    //    String path = "root/hour/";
+    int head;
 
-    int distance = ultrasonicSensor.readDistance();
-    double percent = getTankRemainingPercent(distance, 20);
-    firebase.writeDouble(path, percent);
+    if (firebase.hasInt("root/hour/head")) {
+      head = firebase.readInt("root/hour/head");
+    }
+    else {
+      firebase.writeInt("root/hour/head", 0);
+      head = 0;
+    }
 
+//    int distance = ultrasonicSensor.readDistance();
+//    double percent = getTankRemainingPercent(distance, 20)    cent = random(0,101);
+    double percent = random(0,101);
+
+    firebase.writeDouble("root/hour/" + String(head), percent);
+
+    head = ((head+1)>=60) ? 0 : head+1;
+    firebase.writeInt("root/hour/head", head);
+    
     previousMillis = currentMillis;
   }
 

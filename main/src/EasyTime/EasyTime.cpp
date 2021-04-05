@@ -31,5 +31,11 @@ String EasyTime::getCurrentTime()
 {
     String formattedDate = getCurrentDateTime();
     int splitT = formattedDate.indexOf("T");
-    return formattedDate.substring(splitT + 1, formattedDate.length() - 1);
+    return formattedDate.substring(splitT + 1, formattedDate.length() - 2);
+}
+
+String EasyTime::getHourAndMinutes() {
+    String formattedDate = getCurrentDateTime();
+    int split = formattedDate.lastIndexOf(":");
+    return formattedDate.substring(0, split);
 }

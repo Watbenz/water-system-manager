@@ -16,4 +16,14 @@ String charArrayToString(byte* payload, unsigned int length) {
   return out;
 }
 
+String getSplitedHour(String hourAndMin) {
+    int split = hourAndMin.indexOf(":");
+    return hourAndMin.substring(0, split);
+}
+
+String getSplitedMinute(String hourAndMin) {
+    int split = hourAndMin.indexOf(":");
+    return hourAndMin.substring(split, hourAndMin.length());
+}
+
 #endif

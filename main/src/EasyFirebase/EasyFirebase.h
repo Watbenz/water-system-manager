@@ -18,14 +18,20 @@ private:
 public:
     void init();
     void printResult();
-    double readDouble(String &path);
-    void writeDouble(String &path, double data);
-    int readInt(String &path);
-    void writeInt(String &path, int data);
-    String readString(String &path);
-    void writeString(String &path, String &data);
-    void deleteNode(String &path);
-    void updateNode(String &path, FirebaseJson json);
+    double readDouble(const String &path);
+    bool hasDouble(const String &path);
+    void writeDouble(const String &path, double data);
+    int readInt(const String &path);
+    bool hasInt(const String &path);
+    void writeInt(const String &path, int data);
+    FirebaseJson readJson(const String &path);
+    bool hasJson(const String &path);
+    void writeJson(const String &path, FirebaseJson data);
+    String readString(const String &path);
+    bool hasString(const String &path);
+    void writeString(const String &path, const String &data);
+    void deleteNode(const String &path);
+    void clearAllNodeExcept(const String &path, int *excepts);
 };
 
 #endif

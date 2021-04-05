@@ -165,7 +165,7 @@ void EasyFirebase::printFile()
     file.close();
 }
 
-void EasyFirebase::writeDouble(String &path, double data)
+void EasyFirebase::writeDouble(const String &path, double data)
 {
     if (Firebase.setDouble(fbdo, path, data))
         printSuccess();
@@ -173,7 +173,7 @@ void EasyFirebase::writeDouble(String &path, double data)
         printError();
 }
 
-double EasyFirebase::readDouble(String &path)
+double EasyFirebase::readDouble(const String &path)
 {
     if (Firebase.getDouble(fbdo, path))
         return fbdo.doubleData();
@@ -182,7 +182,12 @@ double EasyFirebase::readDouble(String &path)
     return 0.0;
 }
 
-void EasyFirebase::writeInt(String &path, int data)
+bool EasyFirebase::hasDouble(const String &path)
+{
+    return Firebase.getDouble(fbdo, path);
+}
+
+void EasyFirebase::writeInt(const String &path, int data)
 {
     if (Firebase.setInt(fbdo, path, data))
         printSuccess();
@@ -190,7 +195,7 @@ void EasyFirebase::writeInt(String &path, int data)
         printError();
 }
 
-int EasyFirebase::readInt(String &path)
+int EasyFirebase::readInt(const String &path)
 {
     if (Firebase.getInt(fbdo, path))
         return fbdo.intData();
@@ -199,7 +204,12 @@ int EasyFirebase::readInt(String &path)
     return 0;
 }
 
-String EasyFirebase::readString(String &path)
+bool EasyFirebase::hasInt(const String &path)
+{
+    return Firebase.getInt(fbdo, path);
+}
+
+String EasyFirebase::readString(const String &path)
 {
     if (Firebase.getString(fbdo, path))
         return fbdo.stringData();
@@ -208,7 +218,12 @@ String EasyFirebase::readString(String &path)
     return "Error";
 }
 
-void EasyFirebase::writeString(String &path, String &data)
+bool EasyFirebase::hasString(const String &path)
+{
+    return Firebase.getString(fbdo, path);
+}
+
+void EasyFirebase::writeString(const String &path, const String &data)
 {
     if (Firebase.setString(fbdo, path, data))
         printSuccess();
@@ -216,16 +231,69 @@ void EasyFirebase::writeString(String &path, String &data)
         printError();
 }
 
-void EasyFirebase::deleteNode(String &path)
+void EasyFirebase::deleteNode(const String &path)
 {
     Firebase.deleteNode(fbdo, path);
 }
 
-void EasyFirebase::updateNode(String &path, FirebaseJson json) {
-    if (Firebase.updateNode(fbdo, path, json)) {
-        printSuccess();
-    }
-    else {
+void EasyFirebase::clearAllNodeExcept(const String &path, int *excepts)
+{
+    //     FirebaseJsonData jsonData;
+    //     FirebaseJson myJson;
+
+    //     //Get FirebaseJson data
+    //     jsonData.getJSON(myJson);
+
+    //     //Parse the JSON object as list
+    //     //Get the number of items
+    //     size_t len = myJson.iteratorBegin();
+    //     String key, value = "";
+    //     int type = 0;
+    //     for (size_t i = 0; i < len; i++)
+    //     {
+    //         //Get the item at index i, whereas key and value are the returned data
+    //         myJson.iteratorGet(i, type, key, value);
+    //         //Print the data
+    //         Serial.print(i);
+    //         Serial.print(", ");
+    //         Serial.print("Type: ");
+    //         Serial.print(type == FirebaseJson::JSON_OBJECT ? "object" : "array");
+    //         if (type == FirebaseJson::JSON_OBJECT)
+    //         {
+    //             Serial.print(", Key: ");
+    //             Serial.print(key);
+    //         }
+    //         Serial.print(", Value: ");
+    //         Serial.println(value);
+    //     }
+    //     //Clear all list to free memory
+    //     myJson.iteratorEnd();
+
+    //     /*
+    // The result of the above code
+
+    // 0, Type: object, Key: food, Value: salad
+    // 1, Type: object, Key: sweet, Value: cake
+    // 2, Type: object, Key: appetizer, Value: snack
+
+    // */
+}
+
+FirebaseJson EasyFirebase::readJson(const String &path) {
+    if (Firebase.getJSON(fbdo, path))
+        return fbdo.jsonObject();
+    else
         printError();
-    }
+    return FirebaseJson();
+}
+
+bool EasyFirebase::hasJson(const String &path) {
+    return Firebase.getJSON(fbdo, path);
+}
+
+void EasyFirebase::writeJson(const String &path, FirebaseJson data) {
+    if (Firebase.setJSON(fbdo, path, data))
+        printSuccess();
+    else
+        printError();
 }

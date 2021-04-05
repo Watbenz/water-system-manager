@@ -16,6 +16,7 @@ public:
     void init();
     String getCurrentDate();
     String getCurrentTime();
+    String getHourAndMinutes();
 };
 
 #endif
