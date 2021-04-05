@@ -33,8 +33,6 @@ void EasyFirebase::printSuccess()
 
 void EasyFirebase::printResult()
 {
-    // int type = findType(fbdo.dataType());
-
     if (fbdo.dataType() == "int")
         Serial.println(fbdo.intData());
     else if (fbdo.dataType() == "float")
@@ -56,7 +54,6 @@ void EasyFirebase::printResult()
     else
         Serial.println(fbdo.payload());
 }
-
 
 void EasyFirebase::printJson()
 {
@@ -168,8 +165,7 @@ void EasyFirebase::printFile()
     file.close();
 }
 
-
-void EasyFirebase::writeDouble(String path, double data)
+void EasyFirebase::writeDouble(String &path, double data)
 {
     if (Firebase.setDouble(fbdo, path, data))
         printSuccess();
@@ -177,7 +173,7 @@ void EasyFirebase::writeDouble(String path, double data)
         printError();
 }
 
-double EasyFirebase::readDouble(String path)
+double EasyFirebase::readDouble(String &path)
 {
     if (Firebase.getDouble(fbdo, path))
         return fbdo.doubleData();
@@ -186,7 +182,7 @@ double EasyFirebase::readDouble(String path)
     return 0.0;
 }
 
-void EasyFirebase::writeInt(String path, int data)
+void EasyFirebase::writeInt(String &path, int data)
 {
     if (Firebase.setInt(fbdo, path, data))
         printSuccess();
@@ -194,7 +190,7 @@ void EasyFirebase::writeInt(String path, int data)
         printError();
 }
 
-int EasyFirebase::readInt(String path)
+int EasyFirebase::readInt(String &path)
 {
     if (Firebase.getInt(fbdo, path))
         return fbdo.intData();
@@ -203,7 +199,7 @@ int EasyFirebase::readInt(String path)
     return 0;
 }
 
-String EasyFirebase::readString(String path)
+String EasyFirebase::readString(String &path)
 {
     if (Firebase.getString(fbdo, path))
         return fbdo.stringData();
@@ -212,10 +208,24 @@ String EasyFirebase::readString(String path)
     return "Error";
 }
 
-void EasyFirebase::writeString(String path, String data)
+void EasyFirebase::writeString(String &path, String &data)
 {
     if (Firebase.setString(fbdo, path, data))
         printSuccess();
     else
         printError();
+}
+
+void EasyFirebase::deleteNode(String &path)
+{
+    Firebase.deleteNode(fbdo, path);
+}
+
+void EasyFirebase::updateNode(String &path, FirebaseJson json) {
+    if (Firebase.updateNode(fbdo, path, json)) {
+        printSuccess();
+    }
+    else {
+        printError();
+    }
 }

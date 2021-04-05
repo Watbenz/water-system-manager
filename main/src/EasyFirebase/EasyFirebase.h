@@ -8,7 +8,6 @@ class EasyFirebase
 {
 private:
     FirebaseData fbdo;
-    FirebaseJson json;
     void printError();
     void printSuccess();
     void printJson();
@@ -19,12 +18,14 @@ private:
 public:
     void init();
     void printResult();
-    double readDouble(String path);
-    void writeDouble(String path, double data);
-    int readInt(String path);
-    void writeInt(String path, int data);
-    String readString(String path);
-    void writeString(String path, String data);
+    double readDouble(String &path);
+    void writeDouble(String &path, double data);
+    int readInt(String &path);
+    void writeInt(String &path, int data);
+    String readString(String &path);
+    void writeString(String &path, String &data);
+    void deleteNode(String &path);
+    void updateNode(String &path, FirebaseJson json);
 };
 
 #endif
