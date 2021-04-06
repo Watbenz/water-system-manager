@@ -43,13 +43,13 @@ void registerFirebase(EasyFirebase &firebase, EasyTime &easyTime) {
 }
 
 double getStat(EasyFirebase &firebase) {
-    String[5] splitted;
-    String time = firebase.writeString("root/regis/session");
+    String splitted[5];
+    String time = firebase.readString("root/regis/session");
     splitPath(time, splitted);
 
-    int hour = String(splitted[3]);
-    int sum = firebase.hasInt("root/cal/" + hour + "/sum");
-    int n = firebase.hasInt("root/cal/" + hour + "/n");
+    int hour = splitted[3].toInt();
+    int sum = firebase.readInt("root/cal/" + String(hour) + "/sum");
+    int n = firebase.readInt("root/cal/" + String(hour) + "/n");
 
     return double(sum)/double(n);
 }

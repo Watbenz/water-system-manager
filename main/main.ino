@@ -10,6 +10,7 @@
 #include <WiFi.h>
 
 #define INTERVAL 60000
+#define NUMBER_OF_DEVICE 3
 
 EasyWifi wifi;
 EasyFirebase firebase;
@@ -19,12 +20,15 @@ UltrasonicSensor ultrasonicSensor;
 
 WiFiClient client;
 iSYNC iSYNC(client);
-
+bool device[NUMBER_OF_DEVICE + 1] = {0};
 long previousMillis = 0;
+bool askForOpen = false;
+bool askForClose = false;
 
 void callback(char *topic, byte *payload, unsigned int length)
 {
   String cmd = charArrayToString(payload, length);
+
 
   if (cmd.startsWith("LINE:"))
     cmd = cmd.substring(5);
@@ -32,22 +36,73 @@ void callback(char *topic, byte *payload, unsigned int length)
   Serial.print("command from line: ");
   Serial.println(cmd);
 
-  if (cmd.equals("เปิดไฟ"))
+  if (askForClose) {
+    int pos = cmd.toInt();
+    if ((pos > 0) && (pos <= NUMBER_OF_DEVICE)) {
+      iSYNC.mqPub(iSYNC_KEY, "ก๊อกน้ำช่องที่ " + String(pos) + " เปิดแล้ว");
+      device[pos] = false;
+      askForOpen = false;
+      askForClose = false;
+    }
+  }
+  else if (askForOpen)
   {
-    iSYNC.mqPub(iSYNC_KEY, "ไฟได้เปิดขึ้นแล้ว"); //Publish
+    int pos = cmd.toInt();
+    if ((pos > 0) && (pos <= NUMBER_OF_DEVICE)) {
+      iSYNC.mqPub(iSYNC_KEY, "ก๊อกน้ำช่องที่ " + String(pos) + " เปิดแล้ว");
+      device[pos] = true;
+      askForOpen = false;
+      askForClose = false;
+    }
+  }
+  
+  if (cmd.equals("เปิดน้ำ")) {
+    askForOpen = true;
+    askForClose = false;
+    String out = "";
+    for (int i = 1; i <= NUMBER_OF_DEVICE; i++) {
+      out += "น้ำตำแหน่งที่ " + String(i) + (device[i] ? ": เปิดอยู่" : ": ปิดอยู่") + "\n";
+    }
+    out += "กรุณาพิมพ์ตัวเลขตำแหน่งน้ำเพื่อสั่งเปิด";
+    iSYNC.mqPub(iSYNC_KEY, out);
+  }
+  else if (cmd.equals("ปิดน้ำ")) {
+    askForOpen = false;
+    askForClose = true;
+    String out = "";
+    for (int i = 1; i <= NUMBER_OF_DEVICE; i++) {
+      out += "น้ำตำแหน่งที่ " + String(i) + (device[i] ? ": เปิดอยู่" : ": ปิดอยู่") + "\n";
+    }
+    out += "กรุณาพิมพ์ตัวเลขตำแหน่งน้ำเพื่อสั่งปิด";
+    iSYNC.mqPub(iSYNC_KEY, out);
   }
   else if (cmd.equals("ระดับน้ำ"))
   {
+    askForOpen = false;
+    askForClose = false;
     int d = ultrasonicSensor.readDistance();
     double remain = getTankRemainingPercent(d, 20);
-    String out = "สถิติระดับน้ำใน 1 ชั่วโมงคือ " + String(remain); 
-    iSYNC.mqPub(iSYNC_KEY, out);
+    iSYNC.mqPub(iSYNC_KEY, "ระดับน้ำปัจจุบันมีน้ำอยู่ " + String(remain) + "%");
   }
   else if (cmd.equals("สถิติ"))
   {
+    askForOpen = false;
+    askForClose = false;
+
+    String splitted[5];
+    splitPath(easyTime.getTimePath(), splitted);
+
     double val = getStat(firebase);
-    String out = "สถิติระดับน้ำใน 1 ชั่วโมงคือ " 
-    iSYNC.mqPub(iSYNC_KEY, "สถิติระดับน้ำใน 1 ชั่วโมงคือ");
+    iSYNC.mqPub(iSYNC_KEY, "สถิติระดับน้ำตั้งแต่ " + splitted[3] + ":00 ถึง " + splitted[3] + ":" + splitted[4] + " คือ " + String(val) + "%");
+  }
+  else if (cmd.equals("ตำแหน่ง")) {
+    askForOpen = false;
+    askForClose = false;
+    String out = "";
+    for (int i = 1; i <= NUMBER_OF_DEVICE; i++) {
+      out += "น้ำตำแหน่งที่ " + String(i) + (device[i] ? ": เปิดอยู่" : ": ปิดอยู่") + "\n";
+    }
+    iSYNC.mqPub(iSYNC_KEY, out);
   }
 }
 
