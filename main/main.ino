@@ -4,6 +4,7 @@
 #include "src\EasyTime\EasyTime.h"
 #include "src\UltrasonicSensor\UltrasonicSensor.h"
 #include "src\Util\Util.h"
+#include "src\CalculateFirebase\CalculateFirebase.h"
 #include "src\Constant\Constant.h"
 #include "src\EasyServer\EasyServer.h"
 #include <iSYNC.h>
@@ -19,7 +20,7 @@ UltrasonicSensor ultrasonicSensor;
 WiFiClient client;
 iSYNC iSYNC(client);
 
-const long interval = 2000;
+const long interval = 5000;
 long previousMillis = 0;
 
 void callback(char *topic, byte *payload, unsigned int length)
@@ -74,26 +75,10 @@ void setup() {
 void loop() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
-    //    String path = "root/" + easyTime.getCurrentDate() + "/" + easyTime.getCurrentTime();
-    //    String path = "root/hour/";
-    int head;
 
-    if (firebase.hasInt("root/hour/head")) {
-      head = firebase.readInt("root/hour/head");
-    }
-    else {
-      firebase.writeInt("root/hour/head", 0);
-      head = 0;
-    }
-
-//    int distance = ultrasonicSensor.readDistance();
-//    double percent = getTankRemainingPercent(distance, 20)    cent = random(0,101);
-    double percent = random(0,101);
-
-    firebase.writeDouble("root/hour/" + String(head), percent);
-
-    head = ((head+1)>=60) ? 0 : head+1;
-    firebase.writeInt("root/hour/head", head);
+    writeDataRoutine(firebase, easyTime);
+    int excepts[1] = {10};
+    clearAllInHourExcept(firebase, excepts, 1);
     
     previousMillis = currentMillis;
   }

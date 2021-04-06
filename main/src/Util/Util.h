@@ -26,4 +26,11 @@ String getSplitedMinute(String hourAndMin) {
     return hourAndMin.substring(split, hourAndMin.length());
 }
 
+bool isContain(int* arr, int length, int x) {
+    for (int i = 0; i < length; i++) {
+        if (arr[i] == x) return true;
+    }
+    return false;
+}
+
 #endif
