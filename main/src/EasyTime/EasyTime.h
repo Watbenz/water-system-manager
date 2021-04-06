@@ -17,6 +17,7 @@ public:
     String getCurrentDate();
     String getCurrentTime();
     String getHourAndMinutes();
+    String getTimePath();
 };
 
 #endif

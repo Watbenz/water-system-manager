@@ -1,4 +1,3 @@
-
 #include "src\EasyWifi\EasyWifi.h"
 #include "src\EasyFirebase\EasyFirebase.h"
 #include "src\EasyTime\EasyTime.h"
@@ -10,6 +9,7 @@
 #include <iSYNC.h>
 #include <WiFi.h>
 
+#define INTERVAL 60000
 
 EasyWifi wifi;
 EasyFirebase firebase;
@@ -20,7 +20,6 @@ UltrasonicSensor ultrasonicSensor;
 WiFiClient client;
 iSYNC iSYNC(client);
 
-const long interval = 5000;
 long previousMillis = 0;
 
 void callback(char *topic, byte *payload, unsigned int length)
@@ -37,9 +36,18 @@ void callback(char *topic, byte *payload, unsigned int length)
   {
     iSYNC.mqPub(iSYNC_KEY, "ไฟได้เปิดขึ้นแล้ว"); //Publish
   }
-  else if (cmd.equals("ปิดไฟ"))
+  else if (cmd.equals("ระดับน้ำ"))
   {
-    iSYNC.mqPub(iSYNC_KEY, "ไฟปิดลงแล้ว"); //Publish
+    int d = ultrasonicSensor.readDistance();
+    double remain = getTankRemainingPercent(d, 20);
+    String out = "สถิติระดับน้ำใน 1 ชั่วโมงคือ " + String(remain); 
+    iSYNC.mqPub(iSYNC_KEY, out);
+  }
+  else if (cmd.equals("สถิติ"))
+  {
+    double val = getStat(firebase);
+    String out = "สถิติระดับน้ำใน 1 ชั่วโมงคือ " 
+    iSYNC.mqPub(iSYNC_KEY, "สถิติระดับน้ำใน 1 ชั่วโมงคือ");
   }
 }
 
@@ -74,12 +82,9 @@ void setup() {
 
 void loop() {
   unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
-
-    writeDataRoutine(firebase, easyTime);
-    int excepts[1] = {10};
-    clearAllInHourExcept(firebase, excepts, 1);
-    
+  if (currentMillis - previousMillis >= INTERVAL) {
+    registerFirebase(firebase, easyTime);
+    writeDataRoutine(firebase, easyTime, ultrasonicSensor);
     previousMillis = currentMillis;
   }
 

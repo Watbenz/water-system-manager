@@ -201,7 +201,7 @@ int EasyFirebase::readInt(const String &path)
         return fbdo.intData();
     else
         printError();
-    return 0;
+    return -1;
 }
 
 bool EasyFirebase::hasInt(const String &path)
@@ -279,7 +279,8 @@ void EasyFirebase::clearAllNodeExcept(const String &path, int *excepts)
     // */
 }
 
-FirebaseJson EasyFirebase::readJson(const String &path) {
+FirebaseJson EasyFirebase::readJson(const String &path)
+{
     if (Firebase.getJSON(fbdo, path))
         return fbdo.jsonObject();
     else
@@ -287,12 +288,33 @@ FirebaseJson EasyFirebase::readJson(const String &path) {
     return FirebaseJson();
 }
 
-bool EasyFirebase::hasJson(const String &path) {
+bool EasyFirebase::hasJson(const String &path)
+{
     return Firebase.getJSON(fbdo, path);
 }
 
-void EasyFirebase::writeJson(const String &path, FirebaseJson data) {
+void EasyFirebase::writeJson(const String &path, FirebaseJson data)
+{
     if (Firebase.setJSON(fbdo, path, data))
+        printSuccess();
+    else
+        printError();
+}
+
+FirebaseJsonArray EasyFirebase::readJsonArray(const String &path) {
+    if (Firebase.get(fbdo, path))
+        return fbdo.jsonArray();
+    else
+        printError();
+    return FirebaseJsonArray();
+}
+
+bool EasyFirebase::hasJsonArray(const String &path) {
+    return Firebase.getArray(fbdo, path);
+}
+
+void EasyFirebase::writeJsonArray(const String &path, FirebaseJsonArray data) {
+    if (Firebase.setArray(fbdo, path, data))
         printSuccess();
     else
         printError();

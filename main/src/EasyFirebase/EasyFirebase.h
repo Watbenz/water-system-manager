@@ -27,6 +27,9 @@ public:
     FirebaseJson readJson(const String &path);
     bool hasJson(const String &path);
     void writeJson(const String &path, FirebaseJson data);
+    FirebaseJsonArray readJsonArray(const String &path);
+    bool hasJsonArray(const String &path);
+    void writeJsonArray(const String &path, FirebaseJsonArray data);
     String readString(const String &path);
     bool hasString(const String &path);
     void writeString(const String &path, const String &data);

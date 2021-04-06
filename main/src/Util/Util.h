@@ -16,21 +16,29 @@ String charArrayToString(byte* payload, unsigned int length) {
   return out;
 }
 
-String getSplitedHour(String hourAndMin) {
+String getSplitedHour(const String &hourAndMin) {
     int split = hourAndMin.indexOf(":");
     return hourAndMin.substring(0, split);
 }
 
-String getSplitedMinute(String hourAndMin) {
+String getSplitedMinute(const String &hourAndMin) {
     int split = hourAndMin.indexOf(":");
-    return hourAndMin.substring(split, hourAndMin.length());
+    return hourAndMin.substring(split+1, hourAndMin.length());
 }
 
-bool isContain(int* arr, int length, int x) {
+bool isContains(int x, int* arr, int length) {
     for (int i = 0; i < length; i++) {
         if (arr[i] == x) return true;
     }
     return false;
+}
+
+void splitPath(const String &path, String out[5]) {
+    out[0] = path.substring(0,4);
+    out[1] = path.substring(5,7);
+    out[2] = path.substring(8,10);
+    out[3] = path.substring(11,13);
+    out[4] = path.substring(14,16);
 }
 
 #endif
