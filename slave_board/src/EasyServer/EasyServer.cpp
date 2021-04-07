@@ -4,7 +4,24 @@
 
 void EasyServer::init()
 {
+    WiFi.mode(WIFI_AP_STA);
+    initSTA();
+    initAP();
+    initAPI();
     server.begin();
+}
+
+void EasyServer::initSTA()
+{
+    Serial.print("AP IP address: ");
+    Serial.println(WiFi.softAPIP());
+}
+
+void EasyServer::initAP()
+{
+    WiFi.softAP(SSID_AP, PASSWORD_AP);
+    Serial.print("ESP32 IP on the WiFi network: ");
+    Serial.println(WiFi.localIP());
 }
 
 void EasyServer::initAPI()

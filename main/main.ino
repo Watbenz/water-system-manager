@@ -12,7 +12,6 @@
 #define INTERVAL 60000
 #define NUMBER_OF_DEVICE 3
 
-EasyWifi wifi;
 EasyFirebase firebase;
 EasyTime easyTime;
 EasyServer server;
@@ -128,7 +127,7 @@ void initISYNC() {
 
 void setup() {
   Serial.begin(115200);
-  wifi.init();
+  initSTAAP();
   server.init();
   firebase.init();
   easyTime.init();

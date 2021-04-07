@@ -1,15 +1,12 @@
-#include "EasyWifi.h"
+#ifndef EASY_WIFI_H
+#define EASY_WIFI_H
+
 #include "WiFi.h"
 #include ".\..\Constant\Constant.h"
 
-void EasyWifi::init()
+void initWifi()
 {
     WiFi.begin(SSID_WIFI, PASSWORD_WIFI);
-    connecting();
-}
-
-void EasyWifi::connecting()
-{
     Serial.print("Connecting to Wi-Fi");
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -22,3 +19,16 @@ void EasyWifi::connecting()
     Serial.println(WiFi.localIP());
     Serial.println();
 }
+
+void initSTAAP()
+{
+    WiFi.mode(WIFI_AP_STA);
+    Serial.print("AP IP address: ");
+    Serial.println(WiFi.softAPIP());
+
+    WiFi.softAP(SSID_AP, PASSWORD_AP);
+    Serial.print("ESP32 IP on the WiFi network: ");
+    Serial.println(WiFi.localIP());
+}
+
+#endif
