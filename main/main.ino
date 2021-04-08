@@ -5,7 +5,6 @@
 #include "src\Util\Util.h"
 #include "src\CalculateFirebase\CalculateFirebase.h"
 #include "src\Constant\Constant.h"
-#include "src\EasyServer\EasyServer.h"
 #include "src\EasyClient\EasyClient.h"
 #include <iSYNC.h>
 #include <WiFi.h>
@@ -14,7 +13,7 @@
 
 EasyFirebase firebase;
 EasyTime easyTime;
-EasyServer server;
+AsyncWebServer server(80);
 EasyWifi wifi;
 DeviceController deviceController;
 unsigned int tankHeigth = 20;
@@ -74,7 +73,7 @@ void callback(char *topic, byte *payload, unsigned int length)
           deviceController.turnOnDevice();
           break;
         case 2:
-          httpGETRequest("http://192.168.4.1/on/?pos=2");
+          httpGETRequest("http://192.168.4.1/on/2");
           break;
         default:
           break;
@@ -161,18 +160,31 @@ void initISYNC()
   initMQTT();
 }
 
+void initAPI() {
+  server.begin();
+  server.on(
+    "/off/1",
+    HTTP_GET,
+  [&](AsyncWebServerRequest * request) {
+    emergencyClose = true;
+    digitalWrite(DEVICE_OUT, LOW);
+    device[1] = false;
+    iSYNC.mqPub(iSYNC_KEY, "ระบบน้ำช่องที่ 1 ปิดฉุกเฉิน");
+    request->send_P(RESPONSE_OK, TEXT, "TRUNED OFF DEVICE");
+  });
+}
+
 void setup()
 {
   Serial.begin(115200);
-  wifi.initWifi();
+  initISYNC();
   wifi.initSTAAP();
-  server.init();
+  initAPI();
   firebase.init();
   easyTime.init();
   deviceController.init();
-  initISYNC();
 }
-
+//
 void loop()
 {
   unsigned long currentMillis = millis();
@@ -180,11 +192,6 @@ void loop()
     registerFirebase(firebase, easyTime);
     writeDataRoutine(firebase, easyTime, deviceController);
     previousMillis = currentMillis;
-  }
-
-  if (emergencyClose) {
-    iSYNC.mqPub(iSYNC_KEY, "Emegency closed");
-    emergencyClose = false;
   }
 
   if (!iSYNC.mqConnected())

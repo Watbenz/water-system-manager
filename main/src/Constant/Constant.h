@@ -1,7 +1,7 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#define SSID_AP "watbenz_server"
+#define SSID_AP "watbenz_server1"
 #define PASSWORD_AP "123456789"
 // #define SSID "Wachirawit_2.4G"
 // #define PASSWORD "3422273580"

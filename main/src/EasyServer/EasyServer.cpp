@@ -27,62 +27,12 @@ void EasyServer::getNofityData()
 void EasyServer::sendingClose()
 {
     server.on(
-        "/off",
-        HTTP_GET,
-        [&](AsyncWebServerRequest *request) {
-            int n = request->params();
-            for (int i = 0; i < n; i++)
-            {
-                AsyncWebParameter *p = request->getParam(i);
-                DeviceController deviceController;
-                if (p->name() == "pos")
-                {
-                    int data = p->value().toInt();
-
-                    switch (data)
-                    {
-                    case -1:
-                        emergencyClose = true;
-                        deviceController.turnOffDevice();
-                        request->send_P(RESPONSE_OK, TEXT, "TRUNED OFF DEVICE");
-                        device[1] = false;
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-        });
-}
-
-// GET: http://192.168.4.1/on/1
-void EasyServer::sendingOpen()
-{
-    server.on(
         "/off/1",
         HTTP_GET,
         [&](AsyncWebServerRequest *request) {
-            // int n = request->params();
-            // for (int i = 0; i < n; i++)
-            // {
-            //     AsyncWebParameter *p = request->getParam(i);
-            //     DeviceController deviceController;
-            //     if (p->name() == "pos")
-            //     {
-            //         int data = p->value().toInt();
-
-            //         switch (data)
-            //         {
-            //         case -1:
-            //             emergencyClose = true;
-            //             deviceController.turnOnDevice();
-                        request->send_P(RESPONSE_OK, TEXT, "TRUNED ON DEVICE 1");
-            //             device[1] = false;
-            //             break;
-            //         default:
-            //             break;
-            //         }
-            //     }
-            // }
+            emergencyClose = true;
+            digitalWrite(DEVICE_OUT, LOW);
+            device[1] = false;
+            request->send_P(RESPONSE_OK, TEXT, "TRUNED OFF DEVICE");
         });
 }
