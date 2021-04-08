@@ -1,20 +1,13 @@
-#include "EasyClient.h"
-#include "ESPAsyncWebServer.h"
+#ifndef EASY_CLIENT_H
+#define EASY_CLIENT_H
+
 #include ".\..\Constant\Constant.h"
 #include ".\..\EasyWifi\EasyWifi.h"
+#include "ESPAsyncWebServer.h"
 #include "HTTPClient.h"
 #include <Arduino.h>
 
-void EasyClient::init()
-{
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(SSID_AP, PASSWORD_AP);
-  waitingWiFi();
-  Serial.print("AP IP address: ");
-  Serial.println(WiFi.softAPIP());
-}
-
-String EasyClient::httpPOSTRequest(const char *endpoint, Stirng reqData)
+String httpPOSTRequest(const char *endpoint, Stirng reqData)
 {
   HTTPClient http;
   http.begin(endpoint);
@@ -39,7 +32,7 @@ String EasyClient::httpPOSTRequest(const char *endpoint, Stirng reqData)
   return payload;
 }
 
-String EasyClient::httpGETRequest(const char *endpoint)
+String httpGETRequest(const char *endpoint)
 {http.POST
   HTTPClient http;
   http.begin(endpoint);
@@ -64,3 +57,6 @@ String EasyClient::httpGETRequest(const char *endpoint)
 
   return payload;
 }
+
+
+#endif

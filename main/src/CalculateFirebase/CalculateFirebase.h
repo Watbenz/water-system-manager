@@ -7,7 +7,7 @@
 #include "FirebaseESP32.h"
 #include <Arduino.h>
 
-void writeDataRoutine(EasyFirebase &firebase, EasyTime &easyTime, UltrasonicSensor &ultrasonicSensor)
+void writeDataRoutine(EasyFirebase &firebase, EasyTime &easyTime)
 {
     //    int distance = ultrasonicSensor.readDistance();
     //    double percent = getTankRemainingPercent(distance, 20)    cent = random(0,101);

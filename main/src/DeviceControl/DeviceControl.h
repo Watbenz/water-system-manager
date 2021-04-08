@@ -1,11 +1,14 @@
-#include "UltrasonicSensor.h"
+#ifndef DEVICE_CONTROL_H
+#define DEVICE_CONTROL_H
+
 #include ".\..\Constant\Constant.h"
 #include <Arduino.h>
 
-UltrasonicSensor::UltrasonicSensor()
-{
+void initDevice() {
     pinMode(TRIG, OUTPUT);
     pinMode(ECHO, INPUT);
+
+    pinMode(WATER_SENSOR, INPUT);
 }
 
 /*  s = v * t
@@ -13,7 +16,7 @@ UltrasonicSensor::UltrasonicSensor()
  *  t = time when ultrasonic wave back to echo (µs = 10^-6 s)
  *  divided by 2 it mean found object and reflexed back
  */
-int UltrasonicSensor::readDistance()
+int readDistance()
 {
     digitalWrite(TRIG, LOW);
     delayMicroseconds(2);
@@ -26,3 +29,9 @@ int UltrasonicSensor::readDistance()
     long t = pulseIn(ECHO, HIGH);
     return 0.034 * t / 2;
 }
+
+int readWaterSensor() {
+    return analogRead(WATER_SENSOR);
+}
+
+#endif

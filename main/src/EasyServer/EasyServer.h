@@ -11,6 +11,7 @@ private:
     void getNofityData();
 public:
     void init();
+    void sendingOpen(int pos);
 };
 
 #endif

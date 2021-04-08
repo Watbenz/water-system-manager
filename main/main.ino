@@ -1,7 +1,7 @@
 #include "src\EasyWifi\EasyWifi.h"
 #include "src\EasyFirebase\EasyFirebase.h"
 #include "src\EasyTime\EasyTime.h"
-#include "src\UltrasonicSensor\UltrasonicSensor.h"
+#include "src\DeviceControl\DeviceControl.h"
 #include "src\Util\Util.h"
 #include "src\CalculateFirebase\CalculateFirebase.h"
 #include "src\Constant\Constant.h"
@@ -15,7 +15,7 @@
 EasyFirebase firebase;
 EasyTime easyTime;
 EasyServer server;
-UltrasonicSensor ultrasonicSensor;
+EasyWifi wifi;
 
 WiFiClient client;
 iSYNC iSYNC(client);
@@ -79,7 +79,7 @@ void callback(char *topic, byte *payload, unsigned int length)
   {
     askForOpen = false;
     askForClose = false;
-    int d = ultrasonicSensor.readDistance();
+    int d = readDistance();
     double remain = getTankRemainingPercent(d, 20);
     iSYNC.mqPub(iSYNC_KEY, "ระดับน้ำปัจจุบันมีน้ำอยู่ " + String(remain) + "%");
   }
@@ -127,7 +127,8 @@ void initISYNC() {
 
 void setup() {
   Serial.begin(115200);
-  initSTAAP();
+  wifi.initWifi();
+  wifi.initSTAAP();
   server.init();
   firebase.init();
   easyTime.init();
@@ -138,7 +139,7 @@ void loop() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= INTERVAL) {
     registerFirebase(firebase, easyTime);
-    writeDataRoutine(firebase, easyTime, ultrasonicSensor);
+    writeDataRoutine(firebase, easyTime);
     previousMillis = currentMillis;
   }
 

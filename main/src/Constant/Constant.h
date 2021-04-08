@@ -23,5 +23,6 @@
 #define WATER_SENSOR 34
 #define ECHO 2
 #define TRIG 0
+#define DEVICE_OUT 4
 
 #endif
