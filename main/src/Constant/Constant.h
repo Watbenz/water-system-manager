@@ -18,11 +18,17 @@
 #define iSYNC_AUTH "6047312e62c47f64b13fb5ad"
 #define iSYNC_KEY "6047319862c47f64b13fbe3e"
 
+#define NUMBER_OF_DEVICE 2
 #define GMT (3600 * 7)
 
 #define WATER_SENSOR 34
 #define ECHO 2
 #define TRIG 0
 #define DEVICE_OUT 4
+
+static bool emergencyClose = false;
+static bool device[NUMBER_OF_DEVICE + 1] = {0};
+static int tankHeight = 25;
+static int tankGap = 5;
 
 #endif

@@ -3,15 +3,15 @@
 
 #include ".\..\EasyFirebase\EasyFirebase.h"
 #include ".\..\EasyTime\EasyTime.h"
+#include ".\..\DeviceController\DeviceController.h"
 #include ".\..\Util\Util.h"
 #include "FirebaseESP32.h"
 #include <Arduino.h>
 
-void writeDataRoutine(EasyFirebase &firebase, EasyTime &easyTime)
+void writeDataRoutine(EasyFirebase &firebase, EasyTime &easyTime, DeviceController &deviceController)
 {
-    //    int distance = ultrasonicSensor.readDistance();
-    //    double percent = getTankRemainingPercent(distance, 20)    cent = random(0,101);
-    int percent = random(0,101);
+       int distance = deviceController.readDistance();
+       double percent = getTankRemainingPercent(distance);
 
     String splitted[5];
     splitPath(easyTime.getTimePath(), splitted);

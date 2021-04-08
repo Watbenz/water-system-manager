@@ -7,33 +7,8 @@
 #include "HTTPClient.h"
 #include <Arduino.h>
 
-String httpPOSTRequest(const char *endpoint, Stirng reqData)
-{
-  HTTPClient http;
-  http.begin(endpoint);
-
-  int httpResponseCode = http.POST(reqData);
-  String payload = "";
-
-  if (httpResponseCode > 0)
-  {
-    Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
-    payload = http.getString();
-  }
-  else
-  {
-    Serial.print("Error code: ");
-    Serial.println(httpResponseCode);
-  }
-
-  http.end();
-
-  return payload;
-}
-
 String httpGETRequest(const char *endpoint)
-{http.POST
+{
   HTTPClient http;
   http.begin(endpoint);
 

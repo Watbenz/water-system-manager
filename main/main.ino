@@ -1,44 +1,61 @@
 #include "src\EasyWifi\EasyWifi.h"
 #include "src\EasyFirebase\EasyFirebase.h"
 #include "src\EasyTime\EasyTime.h"
-#include "src\DeviceControl\DeviceControl.h"
+#include "src\DeviceController\DeviceController.h"
 #include "src\Util\Util.h"
 #include "src\CalculateFirebase\CalculateFirebase.h"
 #include "src\Constant\Constant.h"
 #include "src\EasyServer\EasyServer.h"
+#include "src\EasyClient\EasyClient.h"
 #include <iSYNC.h>
 #include <WiFi.h>
 
 #define INTERVAL 60000
-#define NUMBER_OF_DEVICE 3
 
 EasyFirebase firebase;
 EasyTime easyTime;
 EasyServer server;
 EasyWifi wifi;
+DeviceController deviceController;
+unsigned int tankHeigth = 20;
 
 WiFiClient client;
 iSYNC iSYNC(client);
-bool device[NUMBER_OF_DEVICE + 1] = {0};
+
 long previousMillis = 0;
-bool askForOpen = false;
 bool askForClose = false;
+bool askForOpen = false;
 
 void callback(char *topic, byte *payload, unsigned int length)
 {
   String cmd = charArrayToString(payload, length);
 
-
   if (cmd.startsWith("LINE:"))
+  {
     cmd = cmd.substring(5);
+  }
 
   Serial.print("command from line: ");
   Serial.println(cmd);
 
-  if (askForClose) {
+  if (askForClose)
+  {
     int pos = cmd.toInt();
-    if ((pos > 0) && (pos <= NUMBER_OF_DEVICE)) {
-      iSYNC.mqPub(iSYNC_KEY, "ก๊อกน้ำช่องที่ " + String(pos) + " เปิดแล้ว");
+    if ((pos > 0) && (pos <= NUMBER_OF_DEVICE))
+    {
+      iSYNC.mqPub(iSYNC_KEY, "ก๊อกน้ำช่องที่ " + String(pos) + " ปิดแล้ว");
+
+      switch (pos)
+      {
+        case 1:
+          deviceController.turnOffDevice();
+          break;
+        case 2:
+          httpGETRequest("http://192.168.4.1/off/2");
+          break;
+        default:
+          break;
+      }
       device[pos] = false;
       askForOpen = false;
       askForClose = false;
@@ -47,29 +64,46 @@ void callback(char *topic, byte *payload, unsigned int length)
   else if (askForOpen)
   {
     int pos = cmd.toInt();
-    if ((pos > 0) && (pos <= NUMBER_OF_DEVICE)) {
+    if ((pos > 0) && (pos <= NUMBER_OF_DEVICE))
+    {
       iSYNC.mqPub(iSYNC_KEY, "ก๊อกน้ำช่องที่ " + String(pos) + " เปิดแล้ว");
+
+      switch (pos)
+      {
+        case 1:
+          deviceController.turnOnDevice();
+          break;
+        case 2:
+          httpGETRequest("http://192.168.4.1/on/?pos=2");
+          break;
+        default:
+          break;
+      }
       device[pos] = true;
       askForOpen = false;
       askForClose = false;
     }
   }
-  
-  if (cmd.equals("เปิดน้ำ")) {
+
+  if (cmd.equals("เปิดน้ำ"))
+  {
     askForOpen = true;
     askForClose = false;
     String out = "";
-    for (int i = 1; i <= NUMBER_OF_DEVICE; i++) {
+    for (int i = 1; i <= NUMBER_OF_DEVICE; i++)
+    {
       out += "น้ำตำแหน่งที่ " + String(i) + (device[i] ? ": เปิดอยู่" : ": ปิดอยู่") + "\n";
     }
     out += "กรุณาพิมพ์ตัวเลขตำแหน่งน้ำเพื่อสั่งเปิด";
     iSYNC.mqPub(iSYNC_KEY, out);
   }
-  else if (cmd.equals("ปิดน้ำ")) {
+  else if (cmd.equals("ปิดน้ำ"))
+  {
     askForOpen = false;
     askForClose = true;
     String out = "";
-    for (int i = 1; i <= NUMBER_OF_DEVICE; i++) {
+    for (int i = 1; i <= NUMBER_OF_DEVICE; i++)
+    {
       out += "น้ำตำแหน่งที่ " + String(i) + (device[i] ? ": เปิดอยู่" : ": ปิดอยู่") + "\n";
     }
     out += "กรุณาพิมพ์ตัวเลขตำแหน่งน้ำเพื่อสั่งปิด";
@@ -79,8 +113,8 @@ void callback(char *topic, byte *payload, unsigned int length)
   {
     askForOpen = false;
     askForClose = false;
-    int d = readDistance();
-    double remain = getTankRemainingPercent(d, 20);
+    int d = deviceController.readDistance();
+    double remain = getTankRemainingPercent(d);
     iSYNC.mqPub(iSYNC_KEY, "ระดับน้ำปัจจุบันมีน้ำอยู่ " + String(remain) + "%");
   }
   else if (cmd.equals("สถิติ"))
@@ -94,17 +128,18 @@ void callback(char *topic, byte *payload, unsigned int length)
     double val = getStat(firebase);
     iSYNC.mqPub(iSYNC_KEY, "สถิติระดับน้ำตั้งแต่ " + splitted[3] + ":00 ถึง " + splitted[3] + ":" + splitted[4] + " คือ " + String(val) + "%");
   }
-  else if (cmd.equals("ตำแหน่ง")) {
+  else if (cmd.equals("ตำแหน่ง"))
+  {
     askForOpen = false;
     askForClose = false;
     String out = "";
-    for (int i = 1; i <= NUMBER_OF_DEVICE; i++) {
+    for (int i = 1; i <= NUMBER_OF_DEVICE; i++)
+    {
       out += "น้ำตำแหน่งที่ " + String(i) + (device[i] ? ": เปิดอยู่" : ": ปิดอยู่") + "\n";
     }
     iSYNC.mqPub(iSYNC_KEY, out);
   }
 }
-
 
 void initMQTT()
 {
@@ -118,29 +153,38 @@ void initMQTT()
   iSYNC.mqSub(iSYNC_KEY); //subscribe key
 }
 
-void initISYNC() {
+void initISYNC()
+{
   iSYNC.begin(SSID_WIFI, PASSWORD_WIFI);
   iSYNC.mqInit(iSYNC_USERNAME, iSYNC_AUTH);
   iSYNC.MQTT->setCallback(callback);
   initMQTT();
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   wifi.initWifi();
   wifi.initSTAAP();
   server.init();
   firebase.init();
   easyTime.init();
+  deviceController.init();
   initISYNC();
 }
 
-void loop() {
+void loop()
+{
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= INTERVAL) {
     registerFirebase(firebase, easyTime);
-    writeDataRoutine(firebase, easyTime);
+    writeDataRoutine(firebase, easyTime, deviceController);
     previousMillis = currentMillis;
+  }
+
+  if (emergencyClose) {
+    iSYNC.mqPub(iSYNC_KEY, "Emegency closed");
+    emergencyClose = false;
   }
 
   if (!iSYNC.mqConnected())

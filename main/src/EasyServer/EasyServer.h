@@ -9,9 +9,11 @@ private:
     AsyncWebServer server = AsyncWebServer(80);  // Create AsyncWebServer object on port 80
     void initAPI();
     void getNofityData();
+    void sendingClose();
+    void sendingOpen();
+
 public:
     void init();
-    void sendingOpen(int pos);
 };
 
 #endif

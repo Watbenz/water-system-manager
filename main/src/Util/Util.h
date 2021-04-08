@@ -2,11 +2,14 @@
 #define Util_H
 
 #include <Arduino.h>
+#include ".\..\Constant\Constant.h"
 
-double getTankRemainingPercent(int d, int tankHeight)
+
+double getTankRemainingPercent(int d)
 {
     if ((d <= 0) || (d >= tankHeight))
         return -1;
+    d = d - tankGap;
     return 100.0 - ((d / (double)tankHeight) * 100.0);
 }
 
@@ -39,6 +42,12 @@ void splitPath(const String &path, String out[5]) {
     out[2] = path.substring(8,10);
     out[3] = path.substring(11,13);
     out[4] = path.substring(14,16);
+}
+
+void setFlag(bool a, bool b, bool c, bool arr[3]) {
+    arr[0] = a;
+    arr[1] = b;
+    arr[2] = c;
 }
 
 #endif
