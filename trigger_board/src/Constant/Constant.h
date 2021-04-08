@@ -3,8 +3,8 @@
 
 #define SSID_AP "watbenz_server3"
 #define PASSWORD_AP "123456789"
-#define SSID_WIFI "watbenz"
-#define PASSWORD_WIFI "watbenzzzzzz"
+#define SSID_WIFI "watbenz_server1"
+#define PASSWORD_WIFI "123456789"
 #define RESPONSE_OK 200
 #define TEXT "text/plain"
 

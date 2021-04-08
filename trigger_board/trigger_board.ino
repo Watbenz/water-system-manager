@@ -13,14 +13,16 @@ void setup()
 {
   Serial.begin(115200);
   wifi.initWifi();
-  wifi.initSTAAP();
   deviceController.init();
 }
 
 void loop()
 {
-    if (deviceController.readWaterSensor()) {
-        httpGETRequest(trigger_endpoint);
-    }
-    delay(1000);
+  int val = deviceController.readWaterSensor();
+  Serial.print("Water Sensor: ");
+  Serial.println(val);
+  if (val > 0) {
+    httpGETRequest(trigger_endpoint);
+  }
+  delay(1000);
 }

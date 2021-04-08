@@ -5,7 +5,7 @@ class EasyWifi
 private:
 public:
 void initWifi();
-void initSTAAP();
+void initSTA();
 };
 
 #endif
