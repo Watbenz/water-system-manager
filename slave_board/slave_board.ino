@@ -1,38 +1,29 @@
-#include ".\EasyClient\EasyClient.h"
-#include ".\EasyServer\EasyServer.h"
-#include ".\Constant\Constaint.h"
+#include ".\src\EasyClient\EasyClient.h"
+#include ".\src\Constant\Constant.h"
+#include ".\src\EasyWifi\EasyWifi.h"
 
-#define DEVICE_NUMBER 1
-#define INTERVAL 1000
+EasyWifi wifi;
 
-EasyClient client;
-EasyServer server;
-unsigned long previousMillis = 0;
-
-const char* notifyEndpoint = "http://192.168.4.1/notify";
+const char* status_endpoint = "http://192.168.4.1/status/2";
 
 void setup()
 {
   Serial.begin(115200);
-  controller.initSTA();
+  pinMode(DEVICE_OUT, OUTPUT);
+  wifi.initWifi();
 }
 
 void loop()
 {
-  unsigned long currentMills = millis();
-
-  if (currentMills - previousMillis >= INTERVAL)
-  {
-    if (WiFi.status() == WL_CONNECTED)
-    {
-      Serial.println(controller.httpGETRequest(notifyEndpoint));
-
-      previousMillis = currentMills;
-    }
-    else
-    {
-      Serial.println("WiFi Disconnected");
-      delay(500);
-    }
+  int val = httpGETRequest(status_endpoint).toInt();
+  Serial.print("RESPONSE: ");
+  Serial.println(val);
+  if (val == 0) {
+    digitalWrite(DEVICE_OUT, LOW);
   }
+  else {
+    digitalWrite(DEVICE_OUT, HIGH);
+  }
+  
+  delay(1000);
 }

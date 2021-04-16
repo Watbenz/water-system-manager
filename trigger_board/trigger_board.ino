@@ -24,5 +24,5 @@ void loop()
   if (val > 0) {
     httpGETRequest(trigger_endpoint);
   }
-  delay(1000);
+  delay(2000);
 }

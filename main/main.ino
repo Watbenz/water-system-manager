@@ -43,17 +43,8 @@ void callback(char *topic, byte *payload, unsigned int length)
     if ((pos > 0) && (pos <= NUMBER_OF_DEVICE))
     {
       iSYNC.mqPub(iSYNC_KEY, "ก๊อกน้ำช่องที่ " + String(pos) + " ปิดแล้ว");
-
-      switch (pos)
-      {
-        case 1:
-          deviceController.turnOffDevice();
-          break;
-        case 2:
-          httpGETRequest("http://192.168.4.1/off/2");
-          break;
-        default:
-          break;
+      if (pos == 1) {
+        deviceController.turnOffDevice();
       }
       device[pos] = false;
       askForOpen = false;
@@ -66,17 +57,8 @@ void callback(char *topic, byte *payload, unsigned int length)
     if ((pos > 0) && (pos <= NUMBER_OF_DEVICE))
     {
       iSYNC.mqPub(iSYNC_KEY, "ก๊อกน้ำช่องที่ " + String(pos) + " เปิดแล้ว");
-
-      switch (pos)
-      {
-        case 1:
-          deviceController.turnOnDevice();
-          break;
-        case 2:
-          httpGETRequest("http://192.168.4.1/on/2");
-          break;
-        default:
-          break;
+      if (pos == 1) {
+        deviceController.turnOnDevice();
       }
       device[pos] = true;
       askForOpen = false;
@@ -162,15 +144,24 @@ void initISYNC()
 
 void initAPI() {
   server.begin();
+
+  // GET: http://192.168.4.1/off/1
   server.on(
     "/off/1",
     HTTP_GET,
   [&](AsyncWebServerRequest * request) {
-    emergencyClose = true;
     digitalWrite(DEVICE_OUT, LOW);
     device[1] = false;
     iSYNC.mqPub(iSYNC_KEY, "ระบบน้ำช่องที่ 1 ปิดฉุกเฉิน");
     request->send_P(RESPONSE_OK, TEXT, "TRUNED OFF DEVICE");
+  });
+
+  // GET: http://192.168.4.1/status/2
+  server.on(
+    "/status/2",
+    HTTP_GET,
+  [&](AsyncWebServerRequest * request) {
+    request->send_P(RESPONSE_OK, TEXT, device[2] ? "1" : "0");
   });
 }
 

@@ -26,7 +26,6 @@
 #define TRIG 0
 #define DEVICE_OUT 4
 
-static bool emergencyClose = false;
 static bool device[NUMBER_OF_DEVICE + 1] = {0};
 static int tankHeight = 25;
 static int tankGap = 5;
